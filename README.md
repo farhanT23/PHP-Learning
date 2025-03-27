@@ -1303,3 +1303,22 @@ File handling is an essential part of PHP programming, allowing you to read, wri
   }
   fclose($file);
   ```
+
+  ## Practice CLI APP
+```php
+<?php
+$random = rand(1, 10);
+
+do {
+    echo "Guess the number(1-10): ";
+    $guess = intval(fgets(STDIN));
+
+    if($guess>$random) {
+        echo "Too high\n";
+    } else if($guess < $random) {
+        echo "Too Low\n";
+    }
+} while($guess!=$random);
+
+echo "Congrats!!!You guessed right\n";
+```
