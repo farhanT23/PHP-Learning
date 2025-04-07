@@ -2144,3 +2144,133 @@ $motorcycle = new Motorcycle("Harley");
 echo $motorcycle->getModel(); // Output: Harley
 $motorcycle->startEngine(); // Output: Motorcycle engine started.
 ```
+
+# PDO in PHP
+
+### What is PDO?
+PDO is a database access layer that provides a uniform interface for working with multiple databases. It supports various database systems, including MySQL, PostgreSQL, SQLite, and more. PDO simplifies common database operations such as creating connections, executing queries, and handling errors.
+
+### Key Features of PDO
+1. **Database Abstraction**: PDO provides a consistent API for different database systems.
+2. **Prepared Statements**: Helps prevent SQL injection by using placeholders.
+3. **Error Handling**: Offers robust error handling mechanisms.
+4. **Transactions**: Supports database transactions for ensuring data integrity.
+
+### Connecting to a Database
+To connect to a database using PDO, you need to create a new PDO instance with the appropriate DSN (Data Source Name), username, and password.
+
+**Example:**
+```php
+$dsn = 'mysql:host=localhost;dbname=testdb';
+$username = 'root';
+$password = '';
+
+try {
+    $pdo = new PDO($dsn, $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Connected successfully";
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+}
+```
+In this example, we connect to a MySQL database named `testdb` on `localhost` with the username `root` and no password. We also set the error mode to throw exceptions.
+
+### Executing Queries
+You can execute SQL queries using the `query` method for simple queries or the `prepare` and `execute` methods for prepared statements.
+
+**Example: Simple Query**
+```php
+$sql = 'SELECT * FROM users';
+foreach ($pdo->query($sql) as $row) {
+    print_r($row);
+}
+```
+This example retrieves all rows from the `users` table and prints them.
+
+### Prepared Statements
+Prepared statements are used to execute the same query multiple times with different parameters. They help prevent SQL injection by using placeholders.
+
+**Example: Prepared Statement**
+```php
+$sql = 'SELECT * FROM users WHERE email = :email';
+$stmt = $pdo->prepare($sql);
+$stmt->execute(['email' => 'user@example.com']);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+print_r($user);
+```
+In this example, we prepare a statement to select a user by email and execute it with a specific email address.
+
+### Inserting Data
+You can insert data into a database using prepared statements.
+
+**Example: Inserting Data**
+```php
+$sql = 'INSERT INTO users (name, email) VALUES (:name, :email)';
+$stmt = $pdo->prepare($sql);
+$stmt->execute(['name' => 'John Doe', 'email' => 'john@example.com']);
+
+echo "New record created successfully";
+```
+This example inserts a new user into the `users` table.
+
+### Updating Data
+Updating data is similar to inserting data, using prepared statements.
+
+**Example: Updating Data**
+```php
+$sql = 'UPDATE users SET email = :email WHERE id = :id';
+$stmt = $pdo->prepare($sql);
+$stmt->execute(['email' => 'newemail@example.com', 'id' => 1]);
+
+echo "Record updated successfully";
+```
+This example updates the email of the user with ID 1.
+
+### Deleting Data
+You can delete data from a database using prepared statements.
+
+**Example: Deleting Data**
+```php
+$sql = 'DELETE FROM users WHERE id = :id';
+$stmt = $pdo->prepare($sql);
+$stmt->execute(['id' => 1]);
+
+echo "Record deleted successfully";
+```
+This example deletes the user with ID 1.
+
+### Transactions
+PDO supports transactions, which allow you to execute multiple queries as a single unit of work.
+
+**Example: Transactions**
+```php
+try {
+    $pdo->beginTransaction();
+
+    $pdo->exec('INSERT INTO users (name, email) VALUES ("Alice", "alice@example.com")');
+    $pdo->exec('INSERT INTO users (name, email) VALUES ("Bob", "bob@example.com")');
+
+    $pdo->commit();
+    echo "Transaction completed successfully";
+} catch (Exception $e) {
+    $pdo->rollBack();
+    echo "Failed: " . $e->getMessage();
+}
+```
+In this example, we start a transaction, execute two insert queries, and commit the transaction. If an error occurs, we roll back the transaction.
+
+### Error Handling
+PDO provides robust error handling mechanisms. You can set the error mode to throw exceptions, which makes it easier to handle errors.
+
+**Example: Error Handling**
+```php
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+try {
+    $pdo->exec('INVALID SQL');
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+In this example, we set the error mode to throw exceptions and handle any errors that occur.
