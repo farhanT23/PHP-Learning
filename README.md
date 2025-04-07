@@ -2406,3 +2406,149 @@ if ($_POST['csrf_token'] !== $_SESSION['csrf_token']) {
     die("Invalid CSRF token");
 }
 ```
+
+## Trait in PHP
+
+## 🧩 What is a Trait in PHP?
+
+A **Trait** is a **mechanism for code reuse** in single inheritance languages like PHP.
+
+> Think of a Trait as a **collection of methods** you can include in multiple classes **without using inheritance**.
+
+---
+
+## ❓ Why Use Traits?
+
+PHP supports **single inheritance**, meaning a class can inherit from **only one** other class.
+
+But sometimes, you want to **reuse the same methods across multiple unrelated classes**. This is where **Traits** shine.
+
+---
+
+## 🔧 Basic Syntax of a Trait
+
+```php
+trait Logger {
+    public function log($message) {
+        echo "[LOG]: " . $message . "\n";
+    }
+}
+
+class User {
+    use Logger;
+}
+
+class Product {
+    use Logger;
+}
+
+$user = new User();
+$user->log("User created.");  // [LOG]: User created.
+
+$product = new Product();
+$product->log("Product added."); // [LOG]: Product added.
+```
+
+✅ Both `User` and `Product` classes can now use the `log()` method from the `Logger` trait.
+
+---
+
+## 🧪 Key Rules About Traits
+
+### 🔸 You use a trait with `use` keyword:
+```php
+use TraitName;
+```
+
+### 🔸 You can use **multiple traits** in one class:
+```php
+trait A { public function a() {} }
+trait B { public function b() {} }
+
+class MyClass {
+    use A, B;
+}
+```
+
+---
+
+## 🚨 Method Conflict in Traits
+
+What if two traits have a method with the **same name**? PHP allows you to resolve it with **insteadof** and **as**.
+
+```php
+trait A {
+    public function greet() {
+        echo "Hello from A\n";
+    }
+}
+
+trait B {
+    public function greet() {
+        echo "Hello from B\n";
+    }
+}
+
+class MyClass {
+    use A, B {
+        A::greet insteadof B; // Use A's method
+        B::greet as greetB;   // Alias B's method
+    }
+}
+
+$obj = new MyClass();
+$obj->greet();   // Hello from A
+$obj->greetB();  // Hello from B
+```
+
+---
+
+## 🪄 Traits Can Have Properties (But Use Caution)
+
+You can declare properties in traits, but make sure they're not conflicting with properties in the classes using them.
+
+```php
+trait Counter {
+    public $count = 0;
+
+    public function increment() {
+        $this->count++;
+    }
+}
+```
+
+## 🧠 When Should You Use Traits?
+
+✅ Use Traits when:
+- You need to share the **same functionality** across multiple **unrelated classes**.
+- You want to keep code **DRY** (Don't Repeat Yourself).
+- You don’t want to use inheritance (or can't).
+
+❌ Avoid Traits when:
+- Your logic is too complex or you need **tight coupling**.
+- There’s a more **natural parent-child relationship** → use inheritance.
+
+---
+
+## Real-World Example: `AuthTrait`
+
+```php
+trait AuthTrait {
+    public function isLoggedIn() {
+        return isset($_SESSION['user']);
+    }
+
+    public function logout() {
+        unset($_SESSION['user']);
+    }
+}
+
+class AdminPanel {
+    use AuthTrait;
+}
+
+$admin = new AdminPanel();
+if ($admin->isLoggedIn()) {
+    echo "Welcome Admin!";
+}
+```
