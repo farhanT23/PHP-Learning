@@ -1322,3 +1322,825 @@ do {
 
 echo "Congrats!!!You guessed right\n";
 ```
+
+# OOP in PHP
+
+### Constructor Property Promotion
+In PHP 8.0, **Constructor Property Promotion** is a feature that simplifies the way you write class constructors. Instead of declaring properties and then assigning them in the constructor, you can do both in one step.
+
+**Before PHP 8.0:**
+```php
+class User {
+    public string $name;
+    public int $age;
+
+    public function __construct(string $name, int $age) {
+        $this->name = $name;
+        $this->age = $age;
+    }
+}
+```
+
+**With PHP 8.0:**
+```php
+class User {
+    public function __construct(
+        public string $name,
+        public int $age
+    ) {}
+}
+```
+
+### What is the Nullsafe Operator?
+The **Nullsafe Operator** (`?->`) is a feature introduced in PHP 8.0 that allows you to safely access properties and methods of an object that might be `null`. It helps prevent errors that occur when trying to access a property or method on a `null` object.
+
+### How it Works
+When you use the nullsafe operator, PHP will check if the object on the left side of the operator is `null`. If it is, the entire expression will return `null` instead of throwing an error. If the object is not `null`, it will proceed to access the property or method.
+
+### Example
+Consider a scenario where you have a `User` object that may or may not have a `Profile` object associated with it. You want to access the `bio` property of the `Profile` object.
+
+**Without Nullsafe Operator:**
+```php
+if ($user !== null) {
+    $profile = $user->getProfile();
+    if ($profile !== null) {
+        $bio = $profile->bio;
+    } else {
+        $bio = null;
+    }
+} else {
+    $bio = null;
+}
+```
+This code checks if `$user` and `$profile` are not `null` before accessing the `bio` property. It's verbose and can get cumbersome with multiple nested checks.
+
+**With Nullsafe Operator:**
+```php
+$bio = $user?->getProfile()?->bio;
+```
+This single line of code does the same thing. If `$user` is `null`, or if `getProfile()` returns `null`, the expression will return `null` without any errors.
+
+### Benefits
+1. **Cleaner Code**: Reduces the need for multiple `if` checks, making the code more readable and concise.
+2. **Error Prevention**: Helps avoid `null` reference errors, which are common in object-oriented programming.
+3. **Chaining**: You can chain multiple nullsafe operators to safely navigate through nested objects.
+
+### More Complex Example
+Let's say you have a `Company` object that has a `CEO` object, which in turn has a `Profile` object. You want to access the `LinkedIn` URL of the CEO's profile.
+
+**Without Nullsafe Operator:**
+```php
+if ($company !== null) {
+    $ceo = $company->getCEO();
+    if ($ceo !== null) {
+        $profile = $ceo->getProfile();
+        if ($profile !== null) {
+            $linkedin = $profile->linkedin;
+        } else {
+            $linkedin = null;
+        }
+    } else {
+        $linkedin = null;
+    }
+} else {
+    $linkedin = null;
+}
+```
+
+**With Nullsafe Operator:**
+```php
+$linkedin = $company?->getCEO()?->getProfile()?->linkedin;
+```
+This single line safely navigates through the `Company`, `CEO`, and `Profile` objects to access the `linkedin` property.
+
+### What is a Namespace?
+A **namespace** in PHP is a way to encapsulate and organize code, preventing name conflicts between classes, functions, and constants. Namespaces allow you to group related code together and avoid collisions when different parts of your application or different libraries use the same names.
+
+### Basic Syntax
+Namespaces are declared using the `namespace` keyword at the top of your PHP file.
+
+**Example:**
+```php
+namespace MyApp\Models;
+
+class User {
+    // Class code here
+}
+```
+In this example, the `User` class is part of the `MyApp\Models` namespace.
+
+### Using Namespaces
+To use a class, function, or constant from a namespace, you can refer to it with its fully qualified name or use the `use` keyword to import it.
+
+**Fully Qualified Name:**
+```php
+$user = new \MyApp\Models\User();
+```
+
+**Using the `use` Keyword:**
+```php
+use MyApp\Models\User;
+
+$user = new User();
+```
+This makes the code cleaner and easier to read.
+
+### Benefits of Namespaces
+1. **Avoid Name Conflicts**: Prevents clashes between classes, functions, and constants with the same name.
+2. **Organized Code**: Helps structure your code logically, making it easier to maintain and understand.
+3. **Modularity**: Facilitates modular development, allowing you to reuse code across different projects.
+
+### Nested Namespaces
+Namespaces can be nested to create a hierarchy.
+
+**Example:**
+```php
+namespace MyApp\Models;
+
+class User {
+    // Class code here
+}
+
+namespace MyApp\Controllers;
+
+class UserController {
+    // Class code here
+}
+```
+Here, `User` belongs to `MyApp\Models`, and `UserController` belongs to `MyApp\Controllers`.
+
+### Aliasing
+You can use aliasing to shorten long namespace names or resolve conflicts.
+
+**Example:**
+```php
+use MyApp\Models\User as AppUser;
+
+$appUser = new AppUser();
+```
+This allows you to refer to `MyApp\Models\User` as `AppUser`.
+
+### Practical Example
+Let's say you have a project with multiple classes and functions organized into different namespaces.
+
+**File: Models/User.php**
+```php
+namespace MyApp\Models;
+
+class User {
+    public function __construct() {
+        echo "User model";
+    }
+}
+```
+
+**File: Controllers/UserController.php**
+```php
+namespace MyApp\Controllers;
+
+use MyApp\Models\User;
+
+class UserController {
+    public function __construct() {
+        $user = new User();
+        echo "User controller";
+    }
+}
+```
+
+**File: index.php**
+```php
+require 'Models/User.php';
+require 'Controllers/UserController.php';
+
+use MyApp\Controllers\UserController;
+
+$controller = new UserController();
+```
+In this example, `UserController` uses the `User` model from the `MyApp\Models` namespace, demonstrating how namespaces help organize and manage code.
+
+
+
+### Step-by-Step Example
+
+#### Step 1: Directory Structure
+First, let's set up a simple directory structure for our project:
+```
+project/
+    src/
+        Controllers/
+            UserController.php
+        Models/
+            User.php
+    index.php
+```
+
+#### Step 2: Create Classes
+Create the `User` and `UserController` classes in their respective files.
+
+**File: src/Models/User.php**
+```php
+namespace Models;
+
+class User {
+    public function __construct() {
+        echo "User model instantiated.\n";
+    }
+}
+```
+
+**File: src/Controllers/UserController.php**
+```php
+namespace Controllers;
+
+use Models\User;
+
+class UserController {
+    public function __construct() {
+        $user = new User();
+        echo "UserController instantiated.\n";
+    }
+}
+```
+
+#### Step 3: Implement Autoloading
+In the `index.php` file, we'll implement the autoloading using `spl_autoload_register`.
+
+**File: index.php**
+```php
+// Autoload function
+spl_autoload_register(function ($class) {
+    // Convert namespace to full file path
+    $file = __DIR__ . '/src/' . str_replace('\\', '/', $class) . '.php';
+    
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+
+// Use the classes
+use Controllers\UserController;
+
+$controller = new UserController();
+```
+
+### Explanation
+1. **spl_autoload_register**: Registers an autoload function that PHP will call when it encounters an undefined class.
+2. **Autoload Function**: Converts the class name (including namespace) to a file path. For example, `Controllers\UserController` becomes `src/Controllers/UserController.php`.
+3. **File Check**: Checks if the file exists and includes it if it does.
+
+### Running the Example
+When you run `index.php`, PHP will automatically load the `User` and `UserController` classes without needing explicit `require` or `include` statements.
+
+```sh
+php index.php
+```
+
+### Output
+```
+User model instantiated.
+UserController instantiated.
+``` 
+
+### Static Properties and Methods
+Static properties and methods belong to the class itself rather than to instances of the class. This means you can access them without creating an object of the class.
+
+#### Static Properties
+Static properties are declared using the `static` keyword. They are shared among all instances of the class.
+
+**Example:**
+```php
+class Counter {
+    public static int $count = 0;
+
+    public function __construct() {
+        self::$count++;
+    }
+
+    public static function getCount(): int {
+        return self::$count;
+    }
+}
+
+$counter1 = new Counter();
+$counter2 = new Counter();
+
+echo Counter::getCount(); // Output: 2
+```
+In this example, `Counter::$count` is a static property that keeps track of the number of `Counter` instances created.
+
+#### Static Methods
+Static methods are also declared using the `static` keyword. They can be called on the class itself without creating an instance.
+
+**Example:**
+```php
+class MathHelper {
+    public static function add(int $a, int $b): int {
+        return $a + $b;
+    }
+}
+
+echo MathHelper::add(5, 3); // Output: 8
+```
+Here, `MathHelper::add` is a static method that performs addition.
+
+### Use Cases
+Static properties and methods are useful in scenarios where you need functionality that is not tied to a specific instance of a class.
+
+#### 1. **Utility Classes**
+Utility classes often contain static methods for common tasks, such as mathematical operations, string manipulations, or date formatting.
+
+**Example:**
+```php
+class StringHelper {
+    public static function toUpperCase(string $input): string {
+        return strtoupper($input);
+    }
+}
+
+echo StringHelper::toUpperCase('hello'); // Output: HELLO
+```
+
+#### 2. **Singleton Pattern**
+The Singleton pattern ensures that a class has only one instance and provides a global point of access to it. Static properties and methods are used to implement this pattern.
+
+**Example:**
+```php
+class Singleton {
+    private static ?Singleton $instance = null;
+
+    private function __construct() {}
+
+    public static function getInstance(): Singleton {
+        if (self::$instance === null) {
+            self::$instance = new Singleton();
+        }
+        return self::$instance;
+    }
+}
+
+$singleton1 = Singleton::getInstance();
+$singleton2 = Singleton::getInstance();
+
+var_dump($singleton1 === $singleton2); // Output: bool(true)
+```
+In this example, `Singleton::getInstance` ensures that only one instance of the `Singleton` class is created.
+
+#### 3. **Configuration Management**
+Static properties can be used to store configuration settings that need to be accessed globally throughout the application.
+
+**Example:**
+```php
+class Config {
+    public static array $settings = [
+        'database_host' => 'localhost',
+        'database_name' => 'my_database'
+    ];
+
+    public static function get(string $key): mixed {
+        return self::$settings[$key] ?? null;
+    }
+}
+
+echo Config::get('database_host'); // Output: localhost
+```
+Here, `Config::$settings` stores configuration settings, and `Config::get` retrieves them.
+
+#### 4. **Counters and Tracking**
+Static properties can be used to keep track of counts or other metrics across multiple instances of a class.
+
+**Example:**
+```php
+class PageView {
+    public static int $totalViews = 0;
+
+    public function __construct() {
+        self::$totalViews++;
+    }
+
+    public static function getTotalViews(): int {
+        return self::$totalViews;
+    }
+}
+
+$page1 = new PageView();
+$page2 = new PageView();
+
+echo PageView::getTotalViews(); // Output: 2
+```
+In this example, `PageView::$totalViews` keeps track of the total number of page views.
+
+### Inheritance
+Inheritance is a fundamental concept in object-oriented programming (OOP) that allows a class to inherit properties and methods from another class. The class that inherits is called the **child class**, and the class being inherited from is called the **parent class**.
+
+#### Basic Syntax
+To create a child class that inherits from a parent class, use the `extends` keyword.
+
+**Example:**
+```php
+class Animal {
+    public string $name;
+
+    public function __construct(string $name) {
+        $this->name = $name;
+    }
+
+    public function makeSound() {
+        echo "Some generic sound";
+    }
+}
+
+class Dog extends Animal {
+    public function makeSound() {
+        echo "Bark";
+    }
+}
+
+$dog = new Dog("Buddy");
+echo $dog->name; // Output: Buddy
+$dog->makeSound(); // Output: Bark
+```
+In this example, the `Dog` class inherits the `name` property and the `makeSound` method from the `Animal` class. The `Dog` class also overrides the `makeSound` method to provide a specific implementation.
+
+### Method Overriding
+Method overriding allows a child class to provide a specific implementation of a method that is already defined in its parent class. This is useful for customizing or extending the behavior of inherited methods.
+
+#### Basic Syntax
+To override a method, simply define a method in the child class with the same name as the method in the parent class.
+
+**Example:**
+```php
+class Animal {
+    public function makeSound() {
+        echo "Some generic sound";
+    }
+}
+
+class Cat extends Animal {
+    public function makeSound() {
+        echo "Meow";
+    }
+}
+
+$cat = new Cat();
+$cat->makeSound(); // Output: Meow
+```
+In this example, the `Cat` class overrides the `makeSound` method from the `Animal` class to provide a specific implementation.
+
+### Deep Dive into Inheritance and Method Overriding
+
+#### 1. **Accessing Parent Methods**
+You can access the parent class's methods using the `parent` keyword.
+
+**Example:**
+```php
+class Animal {
+    public function makeSound() {
+        echo "Some generic sound";
+    }
+}
+
+class Bird extends Animal {
+    public function makeSound() {
+        parent::makeSound();
+        echo " Chirp";
+    }
+}
+
+$bird = new Bird();
+$bird->makeSound(); // Output: Some generic sound Chirp
+```
+In this example, the `Bird` class calls the `makeSound` method from the `Animal` class using `parent::makeSound()` and then adds its own behavior.
+
+#### 2. **Protected Members**
+Protected properties and methods can be accessed by the child class but not from outside the class hierarchy.
+
+**Example:**
+```php
+class Animal {
+    protected string $name;
+
+    public function __construct(string $name) {
+        $this->name = $name;
+    }
+
+    protected function getName() {
+        return $this->name;
+    }
+}
+
+class Fish extends Animal {
+    public function display() {
+        echo $this->getName();
+    }
+}
+
+$fish = new Fish("Goldie");
+$fish->display(); // Output: Goldie
+```
+In this example, the `Fish` class can access the protected `name` property and `getName` method from the `Animal` class.
+
+#### 3. **Abstract Classes and Methods**
+Abstract classes and methods provide a way to define a blueprint for other classes. Abstract methods must be implemented by any child class.
+
+**Example:**
+```php
+abstract class Animal {
+    abstract public function makeSound();
+}
+
+class Cow extends Animal {
+    public function makeSound() {
+        echo "Moo";
+    }
+}
+
+$cow = new Cow();
+$cow->makeSound(); // Output: Moo
+```
+In this example, `Animal` is an abstract class with an abstract method `makeSound`. The `Cow` class must implement the `makeSound` method.
+
+### Use Cases
+
+#### 1. **Code Reusability**
+Inheritance allows you to reuse code by creating a base class with common functionality and extending it in child classes.
+
+**Example:**
+```php
+class Vehicle {
+    public function startEngine() {
+        echo "Engine started";
+    }
+}
+
+class Car extends Vehicle {
+    public function drive() {
+        echo "Driving";
+    }
+}
+
+$car = new Car();
+$car->startEngine(); // Output: Engine started
+$car->drive(); // Output: Driving
+```
+
+#### 2. **Polymorphism**
+Method overriding enables polymorphism, where a parent class reference can point to child class objects, and the correct method implementation is called based on the object type.
+
+**Example:**
+```php
+class Animal {
+    public function makeSound() {
+        echo "Some generic sound";
+    }
+}
+
+class Dog extends Animal {
+    public function makeSound() {
+        echo "Bark";
+    }
+}
+
+class Cat extends Animal {
+    public function makeSound() {
+        echo "Meow";
+    }
+}
+
+function playSound(Animal $animal) {
+    $animal->makeSound();
+}
+
+playSound(new Dog()); // Output: Bark
+playSound(new Cat()); // Output: Meow
+```
+
+#### 3. **Extending Functionality**
+Child classes can extend or modify the behavior of parent class methods through method overriding.
+
+**Example:**
+```php
+class Logger {
+    public function log(string $message) {
+        echo "Log: $message";
+    }
+}
+
+class FileLogger extends Logger {
+    public function log(string $message) {
+        parent::log($message);
+        echo " (written to file)";
+    }
+}
+
+$fileLogger = new FileLogger();
+$fileLogger->log("Hello"); // Output: Log: Hello (written to file)
+```
+
+### Interfaces
+An **interface** in PHP defines a contract that classes must follow. It specifies methods that a class must implement, but does not provide the implementation itself. Interfaces are useful for defining common functionality that multiple classes can implement.
+
+#### Basic Syntax
+Interfaces are declared using the `interface` keyword. Methods in an interface must be public and cannot have a body.
+
+**Example:**
+```php
+interface Logger {
+    public function log(string $message): void;
+}
+
+class FileLogger implements Logger {
+    public function log(string $message): void {
+        echo "Logging to file: $message";
+    }
+}
+
+class DatabaseLogger implements Logger {
+    public function log(string $message): void {
+        echo "Logging to database: $message";
+    }
+}
+
+$fileLogger = new FileLogger();
+$fileLogger->log("File log message"); // Output: Logging to file: File log message
+
+$databaseLogger = new DatabaseLogger();
+$databaseLogger->log("Database log message"); // Output: Logging to database: Database log message
+```
+In this example, both `FileLogger` and `DatabaseLogger` implement the `Logger` interface, ensuring they provide a `log` method.
+
+### Abstract Classes
+An **abstract class** in PHP is a class that cannot be instantiated directly. It can contain abstract methods (methods without implementation) that must be implemented by child classes, as well as regular methods with implementation. Abstract classes are useful for providing a base class with common functionality while enforcing certain methods to be implemented by subclasses.
+
+#### Basic Syntax
+Abstract classes are declared using the `abstract` keyword. Abstract methods must be public or protected and cannot have a body.
+
+**Example:**
+```php
+abstract class Animal {
+    protected string $name;
+
+    public function __construct(string $name) {
+        $this->name = $name;
+    }
+
+    abstract public function makeSound(): void;
+
+    public function getName(): string {
+        return $this->name;
+    }
+}
+
+class Dog extends Animal {
+    public function makeSound(): void {
+        echo "Bark";
+    }
+}
+
+class Cat extends Animal {
+    public function makeSound(): void {
+        echo "Meow";
+    }
+}
+
+$dog = new Dog("Buddy");
+echo $dog->getName(); // Output: Buddy
+$dog->makeSound(); // Output: Bark
+
+$cat = new Cat("Whiskers");
+echo $cat->getName(); // Output: Whiskers
+$cat->makeSound(); // Output: Meow
+```
+In this example, `Animal` is an abstract class with an abstract method `makeSound`. The `Dog` and `Cat` classes must implement the `makeSound` method.
+
+### Deep Dive into Interfaces and Abstract Classes
+
+#### 1. **Multiple Interfaces**
+A class can implement multiple interfaces, allowing it to adhere to multiple contracts.
+
+**Example:**
+```php
+interface Logger {
+    public function log(string $message): void;
+}
+
+interface Formatter {
+    public function format(string $message): string;
+}
+
+class FileLogger implements Logger, Formatter {
+    public function log(string $message): void {
+        echo "Logging to file: " . $this->format($message);
+    }
+
+    public function format(string $message): string {
+        return strtoupper($message);
+    }
+}
+
+$fileLogger = new FileLogger();
+$fileLogger->log("File log message"); // Output: Logging to file: FILE LOG MESSAGE
+```
+In this example, `FileLogger` implements both `Logger` and `Formatter` interfaces.
+
+#### 2. **Abstract Classes with Concrete Methods**
+Abstract classes can contain concrete methods that provide common functionality to child classes.
+
+**Example:**
+```php
+abstract class Shape {
+    abstract public function getArea(): float;
+
+    public function describe(): void {
+        echo "This is a shape.";
+    }
+}
+
+class Circle extends Shape {
+    private float $radius;
+
+    public function __construct(float $radius) {
+        $this->radius = $radius;
+    }
+
+    public function getArea(): float {
+        return pi() * pow($this->radius, 2);
+    }
+}
+
+$circle = new Circle(5);
+$circle->describe(); // Output: This is a shape.
+echo $circle->getArea(); // Output: 78.539816339745
+```
+In this example, `Shape` is an abstract class with a concrete method `describe` and an abstract method `getArea`.
+
+### Use Cases
+
+#### 1. **Defining Contracts**
+Interfaces are ideal for defining contracts that multiple classes must follow, ensuring consistency across different implementations.
+
+**Example:**
+```php
+interface PaymentGateway {
+    public function processPayment(float $amount): void;
+}
+
+class PayPal implements PaymentGateway {
+    public function processPayment(float $amount): void {
+        echo "Processing payment of $amount via PayPal.";
+    }
+}
+
+class Stripe implements PaymentGateway {
+    public function processPayment(float $amount): void {
+        echo "Processing payment of $amount via Stripe.";
+    }
+}
+
+$paypal = new PayPal();
+$paypal->processPayment(100.0); // Output: Processing payment of 100.0 via PayPal.
+
+$stripe = new Stripe();
+$stripe->processPayment(200.0); // Output: Processing payment of 200.0 via Stripe.
+```
+
+#### 2. **Providing Base Functionality**
+Abstract classes are useful for providing base functionality that can be shared among multiple subclasses while enforcing certain methods to be implemented.
+
+**Example:**
+```php
+abstract class Vehicle {
+    protected string $model;
+
+    public function __construct(string $model) {
+        $this->model = $model;
+    }
+
+    abstract public function startEngine(): void;
+
+    public function getModel(): string {
+        return $this->model;
+    }
+}
+
+class Car extends Vehicle {
+    public function startEngine(): void {
+        echo "Car engine started.";
+    }
+}
+
+class Motorcycle extends Vehicle {
+    public function startEngine(): void {
+        echo "Motorcycle engine started.";
+    }
+}
+
+$car = new Car("Toyota");
+echo $car->getModel(); // Output: Toyota
+$car->startEngine(); // Output: Car engine started.
+
+$motorcycle = new Motorcycle("Harley");
+echo $motorcycle->getModel(); // Output: Harley
+$motorcycle->startEngine(); // Output: Motorcycle engine started.
+```
