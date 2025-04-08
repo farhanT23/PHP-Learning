@@ -2713,3 +2713,177 @@ $person = ["name" => "Alice", "age" => 25];
 let fruits = ["apple", "banana"];
 let person = { name: "Alice", age: 25 };
 ```
+
+## Dom Manipulation in JS
+
+### 1. Accessing DOM Elements
+To manipulate the DOM, you first need to select elements. JavaScript provides methods similar to how you might query a database or parse HTML in PHP.
+
+- **By ID**: Use `getElementById()` to grab a single element.
+  ```javascript
+  let title = document.getElementById("main-title");
+  console.log(title); // Like var_dump($title) in PHP
+  ```
+- **By Class**: Use `getElementsByClassName()` (returns a collection).
+  ```javascript
+  let items = document.getElementsByClassName("item");
+  console.log(items[0]); // Access first item, like $items[0] in PHP
+  ```
+- **By Tag**: Use `getElementsByTagName()` for tags like `<div>`.
+  ```javascript
+  let divs = document.getElementsByTagName("div");
+  ```
+- **Query Selector**: Use `querySelector()` (single element) or `querySelectorAll()` (all matches) with CSS-like syntax. Most versatile!
+  ```javascript
+  let firstItem = document.querySelector(".item"); // First .item
+  let allItems = document.querySelectorAll(".item"); // NodeList, like an array
+  ```
+
+**PHP Comparison**: Think of `querySelector` as a more powerful version of PHP’s DOMDocument methods (e.g., `getElementById`) for parsing HTML.
+
+---
+
+### 2. Modifying DOM Elements
+Once you’ve selected an element, you can change its content, attributes, or structure.
+
+- **Change Content**:
+  - `textContent`: Set plain text (safer, like PHP’s `htmlspecialchars`).
+  - `innerHTML`: Set HTML (use cautiously to avoid XSS, unlike PHP’s raw `echo`).
+  ```javascript
+  let title = document.getElementById("main-title");
+  title.textContent = "New Title"; // Updates text
+  title.innerHTML = "<strong>New Title</strong>"; // Adds HTML
+  ```
+- **Change Attributes**:
+  - Use `getAttribute()`, `setAttribute()`, or direct property access.
+  ```javascript
+  let link = document.querySelector("a");
+  link.setAttribute("href", "https://example.com");
+  link.href = "https://example.com"; // Shorter, direct way
+  ```
+- **Modify Classes**:
+  - Use `classList` for clean class manipulation (like PHP’s string manipulation for classes).
+  ```javascript
+  let box = document.querySelector(".box");
+  box.classList.add("active"); // Add class
+  box.classList.remove("active"); // Remove class
+  box.classList.toggle("active"); // Toggle class
+  ```
+
+**PHP Comparison**: Modifying content is like updating a variable before outputting HTML in PHP, but it happens live in the browser.
+
+---
+
+### 3. Creating and Adding Elements
+You can create new elements and insert them into the DOM, similar to building HTML strings in PHP.
+
+- **Create Element**:
+  ```javascript
+  let newDiv = document.createElement("div");
+  newDiv.textContent = "I’m new!";
+  newDiv.classList.add("new-class");
+  ```
+- **Add to DOM**:
+  - `appendChild()`: Add as last child.
+  - `insertBefore()`: Insert before a specific element.
+  ```javascript
+  let container = document.querySelector(".container");
+  container.appendChild(newDiv); // Adds newDiv to container
+  ```
+- **Insert Adjacent**:
+  - Use `insertAdjacentHTML()` for HTML strings (like PHP’s `echo`).
+  ```javascript
+  container.insertAdjacentHTML("beforeend", "<p>Inserted!</p>");
+  ```
+
+**PHP Comparison**:
+```php
+// PHP: Build HTML string
+$html .= "<div class='new-class'>I’m new!</div>";
+echo $html;
+```
+```javascript
+// JS: Create and append
+let newDiv = document.createElement("div");
+newDiv.className = "new-class";
+newDiv.textContent = "I’m new!";
+document.querySelector(".container").appendChild(newDiv);
+```
+
+---
+
+### 4. Removing Elements
+Remove elements from the DOM, similar to filtering out HTML in PHP logic.
+
+- **Remove Child**:
+  ```javascript
+  let parent = document.querySelector(".container");
+  let child = document.querySelector(".item");
+  parent.removeChild(child);
+  ```
+- **Remove Self**:
+  ```javascript
+  let item = document.querySelector(".item");
+  item.remove(); // Simpler, modern way
+  ```
+
+**PHP Comparison**: Think of this as conditionally excluding an element from PHP’s output.
+
+---
+
+### 5. Handling Events
+Events let you respond to user actions (clicks, inputs, etc.), unlike PHP’s server-side processing.
+
+- **Add Event Listener**:
+  - Use `addEventListener()` for flexible event handling.
+  ```javascript
+  let button = document.querySelector("#my-button");
+  button.addEventListener("click", function() {
+      alert("Button clicked!");
+  });
+  ```
+- **Event Object**:
+  - Access event details (like PHP’s `$_POST` for form data).
+  ```javascript
+  button.addEventListener("click", (event) => {
+      console.log(event.target); // Element that triggered event
+  });
+  ```
+- **Form Handling**:
+  ```javascript
+  let form = document.querySelector("form");
+  form.addEventListener("submit", (event) => {
+      event.preventDefault(); // Stop form submission (like PHP validation)
+      let input = document.querySelector("#name").value;
+      console.log(input); // Like $_POST['name']
+  });
+  ```
+
+**PHP Comparison**: Events replace PHP’s form submissions or URL-based triggers, handling logic client-side.
+
+---
+
+### 6. Styling Elements
+Change CSS styles directly, like manipulating inline styles in PHP.
+
+- **Set Style**:
+  ```javascript
+  let box = document.querySelector(".box");
+  box.style.backgroundColor = "blue";
+  box.style.padding = "10px";
+  ```
+- **Toggle Classes for Styling**:
+  ```javascript
+  box.classList.toggle("highlight"); // Apply/remove CSS class
+  ```
+
+**PHP Comparison**:
+```php
+// PHP: Inline style
+echo "<div style='background-color: blue;'>Box</div>";
+```
+```javascript
+// JS: Dynamic style
+let box = document.querySelector("div");
+box.style.backgroundColor = "blue";
+```
