@@ -2096,3 +2096,37 @@ Job Dispatched → Saved in DB → queue:work fetches → Job runs → Email sen
 | `delay()`       | Optional delay before running job                                       |
 
 ---
+
+# Task Scheduling
+
+When using the scheduler, only a single cron entry is needed on your server. Your task schedule is typically defined in your application's ```routes/console.php``` file.
+
+You may define all of your scheduled tasks in your application's ```routes/console.php ```file.
+
+To get started, let's take a look at an example. In this example, we will schedule a closure to be called every day at midnight. Within the closure we will execute a database query to clear a table:
+```php
+<?php
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::call(function () {
+    DB::table('recent_users')->delete();
+})->daily();
+
+```
+
+If you prefer to reserve your ```routes/console.php``` file for command definitions only, you may use the withSchedule method in your application's ```bootstrap/app.php``` file to define your scheduled tasks. This method accepts a closure that receives an instance of the scheduler:
+```php
+use Illuminate\Console\Scheduling\Schedule;
+
+->withSchedule(function (Schedule $schedule) {
+    $schedule->call(new DeleteRecentUsers)->daily();
+})
+````
+
+## Scheduling Artisan Commands
+
+For example, you may use the ```command``` method to schedule an Artisan command using either the command's name or class.When scheduling Artisan commands using the command's class name, you may pass an array of additional command-line arguments that should be provided to the command when it is invoked:
+
+**Important link** : [Scroll down to the link](https://laravel.com/docs/12.x/scheduling#day-constraints)
