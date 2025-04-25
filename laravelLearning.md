@@ -2130,3 +2130,14 @@ use Illuminate\Console\Scheduling\Schedule;
 For example, you may use the ```command``` method to schedule an Artisan command using either the command's name or class.When scheduling Artisan commands using the command's class name, you may pass an array of additional command-line arguments that should be provided to the command when it is invoked:
 
 **Important link** : [Scroll down to the link](https://laravel.com/docs/12.x/scheduling#day-constraints)
+
+
+# Extra Notes:
+
+### OAuth: 
+OAuth is an open standard for authorization that allows users to grant third-party applications access to their data on another website without revealing their username or password. It acts as an intermediary, enabling applications to access specific user information while keeping the user's credentials secure. 
+
+### Sanctum: 
+ Sanctum is a simple package you may use to issue API tokens to your users without the complication of OAuth. This feature is inspired by GitHub and other applications which issue "personal access tokens". For example, imagine the "account settings" of your application has a screen where a user may generate an API token for their account. You may use Sanctum to generate and manage those tokens. These tokens typically have a very long expiration time (years), but may be manually revoked by the user anytime.
+
+ 
