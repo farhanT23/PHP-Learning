@@ -198,3 +198,8 @@ Same effect — cleaner, modern ✨
 ✅ **Mutators** modify when saving or retrieving.  
 ✅ **Casts** auto-convert field types without manual code.  
 ✅ They both make your Laravel models more **powerful**, **simple**, and **automatic**.
+
+----
+
+## Laravel Testing
+### Video with good explaination: [Link To Tutorial](https://www.youtube.com/watch?v=ozsumbtTqpw)
