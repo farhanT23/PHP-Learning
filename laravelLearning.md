@@ -2140,4 +2140,5 @@ OAuth is an open standard for authorization that allows users to grant third-par
 ### Sanctum: 
  Sanctum is a simple package you may use to issue API tokens to your users without the complication of OAuth. This feature is inspired by GitHub and other applications which issue "personal access tokens". For example, imagine the "account settings" of your application has a screen where a user may generate an API token for their account. You may use Sanctum to generate and manage those tokens. These tokens typically have a very long expiration time (years), but may be manually revoked by the user anytime.
 
- 
+ # Package Development
+## One of the video I'll refer: [Link to tutorial](https://www.youtube.com/watch?v=cejHjwtYOWs)
