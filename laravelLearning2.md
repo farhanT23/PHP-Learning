@@ -203,3 +203,33 @@ Same effect — cleaner, modern ✨
 
 ## Laravel Testing
 ### Video with good explaination: [Link To Tutorial](https://www.youtube.com/watch?v=ozsumbtTqpw)
+
+## OAuth 2.0
+
+- OAuth stands for Open Authorization
+- The OAuth protocol was developed as a solution for granting access to a limited set of resources for a predefined period of time without sharing usernames and passwords.
+
+***The client***
+When dealing with OAuth, you’ll often come across the terms “client” or “client_id.” In this context, the client does not refer to an end-user or customer.
+
+The term “client” does not mean “end-user” or “customer” in this case. Instead, the term “client” is used to refer to the application that obtaining access to the protected resources.
+
+***Resources***
+A client has resources which are protected with the OAuth protocol. Often, with resources, we mean API-endpoints.
+
+***The authorisation server***
+The authorization server is where the client requests the end-user to authenticate and obtain a token that represents the scope of permissions granted to the client. During this process:
+
+- The user provides their username and password on the authorization server.
+- The user can consent or deny access to specific resources based on the application’s request, though this feature may be disabled in some cases.
+
+Only registered clients can request end-users to authenticate, ensuring secure access management.
+
+***The end-user***
+OAuth is designed to grant access to resources on behalf of someone or something. The end-user can be a person, but the protocol also supports machine-to-machine communication.
+
+This is why there is not too many emphasis on the term “end-user” in the documentation.
+
+## Larvel Socialite
+### VideoLink for better; [Tutorial](https://www.youtube.com/watch?v=p0I25hL3pBI)
+
