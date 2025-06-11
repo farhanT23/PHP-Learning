@@ -814,3 +814,202 @@ foreach ($university->students as $student) {
 * They make your code **simpler and cleaner**.
 * No need to **manually chain relationships**.
 * Great for situations where you need to **jump over an intermediate model**.
+
+
+# Laravel Spatie Package Migration File
+
+## 🧠 **Goal of This Migration**
+
+Spatie's permission package lets you assign **roles and permissions** to any model (like `User`, `Admin`, etc.). This migration:
+
+* Creates the tables needed to manage roles, permissions, and their relationships with models.
+* Supports multi-guard and multi-team setups.
+
+---
+
+## 📦 **What's Being Created?**
+
+Let’s go step by step:
+
+---
+
+### 🔹 1. `permissions` Table
+
+```php
+Schema::create($tableNames['permissions'], ...)
+```
+
+**Stores each permission**, like:
+
+* `edit post`
+* `delete user`
+* `publish blog`
+
+**Columns:**
+
+* `id` – auto-incremented primary key
+* `name` – name of permission (e.g., `edit post`)
+* `guard_name` – e.g., `web` or `api` (to support multiple guards)
+* `timestamps` – `created_at` & `updated_at`
+
+🧠 **Why `guard_name`?**
+You might have `admin` and `user` using different guards. This keeps them separated.
+
+---
+
+### 🔹 2. `roles` Table
+
+```php
+Schema::create($tableNames['roles'], ...)
+```
+
+**Stores each role**, like:
+
+* `Admin`, `Editor`, `Customer`
+
+**Columns:**
+
+* `id`
+* `name` (e.g., `Admin`)
+* `guard_name`
+* `team_foreign_key` (optional, used for multi-tenant apps, like `company_id`)
+* `timestamps`
+
+🔁 **Unique check:** It avoids duplicate roles within the same team.
+
+---
+
+### 🔹 3. `model_has_permissions` Table
+
+```php
+Schema::create($tableNames['model_has_permissions'], ...)
+```
+
+This is a **pivot table** that connects **a user or any model** to **individual permissions**.
+
+**Columns:**
+
+* `permission_id`
+* `model_type` – class name, like `App\Models\User`
+* `model_id` – e.g., user’s ID
+* `team_foreign_key` – optional for multi-team
+
+✅ Example:
+
+> Give permission `edit post` directly to a user (not via role).
+
+---
+
+### 🔹 4. `model_has_roles` Table
+
+```php
+Schema::create($tableNames['model_has_roles'], ...)
+```
+
+Another **pivot table** that connects **models to roles**.
+
+**Columns:**
+
+* `role_id`
+* `model_type` and `model_id` (who’s getting the role)
+* `team_foreign_key` – optional
+
+✅ Example:
+
+> Assign `Admin` role to user ID 5
+
+---
+
+### 🔹 5. `role_has_permissions` Table
+
+```php
+Schema::create($tableNames['role_has_permissions'], ...)
+```
+
+**Connects roles to permissions.**
+When you define what a role **can do**, this table stores it.
+
+**Columns:**
+
+* `permission_id`
+* `role_id`
+
+✅ Example:
+
+> Role `Admin` has permissions `edit post`, `delete user`, etc.
+
+---
+
+## 🚨 Throwing Errors
+
+```php
+throw_if(empty($tableNames), new Exception(...));
+```
+
+If the `config/permission.php` file isn't loaded correctly (e.g., after fresh install), it throws clear errors so you know to run:
+
+```bash
+php artisan config:clear
+```
+
+---
+
+## 🧹 Cache Clear
+
+```php
+app('cache')->store(...)->forget(...);
+```
+
+After creating tables, it **clears cached permissions/roles**, so your app starts fresh.
+
+---
+
+## 🔁 `down()` Method
+
+This method **removes** all the tables created if you roll back the migration:
+
+```bash
+php artisan migrate:rollback
+```
+
+---
+
+## ✅ TL;DR Summary
+
+| Table                   | Purpose                             |
+| ----------------------- | ----------------------------------- |
+| `permissions`           | All permission names                |
+| `roles`                 | All role names                      |
+| `model_has_permissions` | Direct permission-to-model link     |
+| `model_has_roles`       | Assign role to model (usually User) |
+| `role_has_permissions`  | Assign permissions to roles         |
+
+---
+
+## 🛠️ How to Modify?
+
+Here are **safe ways you can modify**:
+
+1. **Add `company_id` or `tenant_id` to `roles` and `permissions`** for multi-tenant:
+
+   ```php
+   $table->unsignedBigInteger('company_id')->nullable();
+   ```
+
+2. **Change table/column names** from config:
+   `config/permission.php`
+
+   ```php
+   'table_names' => [
+       'roles' => 'custom_roles',
+       ...
+   ]
+   ```
+
+3. **Add new fields (e.g., description) to roles/permissions** if needed:
+
+   ```php
+   $table->string('description')->nullable();
+   ```
+
+---
